@@ -30,5 +30,9 @@ class ReferentTagManager
         foreach ($this->referentTagRepository->findByCodes($codes) as $referentTag) {
             $adherent->addReferentTag($referentTag);
         }
+
+        if ($adherent->getId()) {
+            $this->emailSubscriptionHistoryManager->updateHistoryForZipCodeChanging($adherent);
+        }
     }
 }
