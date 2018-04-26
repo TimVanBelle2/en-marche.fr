@@ -4,6 +4,7 @@ namespace AppBundle\History;
 
 use AppBundle\Entity\Adherent;
 use AppBundle\Entity\AdherentEmailSubscriptionHistory;
+use AppBundle\Membership\AdherentEmailSubscription;
 use AppBundle\Repository\AdherentEmailSubscriptionHistoryRepository;
 use AppBundle\Repository\AdherentRepository;
 use Doctrine\Common\Collections\Collection;
@@ -79,5 +80,30 @@ class AdherentEmailSubscriptionHistoryManager
                 $this->manager->persist($history);
             }
         }
+    }
+
+    public function countByMonthForReferentManagedArea(Adherent $referent, int $months = 6): array
+    {
+        $firstDayOfMonth = new \DateTime('first day of next month');
+        $countedSubscriptions = [];
+        for ($i = 0; $i < $months; ++$i) {
+            $subscriptions = $this->historyRepository->countAllByTypeForReferentManagedArea(
+                $referent,
+                [
+                    AdherentEmailSubscription::SUBSCRIBED_EMAILS_LOCAL_HOST,
+                    AdherentEmailSubscription::SUBSCRIBED_EMAILS_REFERENTS,
+                ],
+                0 === $i ? new \DateTime() : $firstDayOfMonth,
+                0 === $i ? false : true // cache the result for precedent months, because this data never change
+            );
+
+            $firstDayOfMonth->modify('-1 month');
+            array_walk($subscriptions, function (&$item) {
+                $item = (int) $item['count'];
+            });
+            $countedSubscriptions[0 === $i ? (new \DateTime())->format('Y-m') : $firstDayOfMonth->format('Y-m')] = $subscriptions;
+        }
+
+        return $countedSubscriptions;
     }
 }

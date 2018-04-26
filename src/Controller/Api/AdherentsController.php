@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller\Api;
 
+use AppBundle\History\AdherentEmailSubscriptionHistoryManager;
 use AppBundle\Repository\AdherentRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -31,11 +32,13 @@ class AdherentsController extends Controller
      * @Route("/count-by-referent-area", name="app_adherents_count_for_referent_managed_area")
      * @Method("GET")
      */
-    public function adherentsCountForReferentManagedAreaAction(AdherentRepository $adherentRepository): Response
+    public function adherentsCountForReferentManagedAreaAction(AdherentRepository $adherentRepository, AdherentEmailSubscriptionHistoryManager $subscriptionHistoryManager): Response
     {
-        $count = $adherentRepository->countByGenderManagedBy($this->getUser());
+        $referent = $this->getUser();
+        $count = $adherentRepository->countByGenderManagedBy($referent);
+        $subscriptions = $subscriptionHistoryManager->countByMonthForReferentManagedArea($referent);
 
-        return new JsonResponse($this->aggregateCount($count));
+        return new JsonResponse(array_merge($this->aggregateCount($count), ['email_subscriptions' => $subscriptions]));
     }
 
     private function aggregateCount(array $count): array

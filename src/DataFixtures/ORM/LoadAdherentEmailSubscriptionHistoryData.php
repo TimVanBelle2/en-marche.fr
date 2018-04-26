@@ -20,8 +20,16 @@ class LoadAdherentEmailSubscriptionHistoryData extends AbstractFixture implement
         foreach ($adherents as $key => $adherent) {
             foreach ($adherent->getEmailsSubscriptions() as $subscription) {
                 foreach ($adherent->getReferentTags() as $tag) {
+                    // Create an old history for an adherent to have multiple subscriptions
+                    if (in_array($adherent->getUuid(), [LoadAdherentData::ADHERENT_2_UUID])) {
+                        $oldHistory = new AdherentEmailSubscriptionHistory($adherent, $subscription, $tag, new \DateTime('-4 months'));
+                        $oldHistory->setUnsubscribedAt(new \DateTime('-3 months'));
+                        $manager->persist($oldHistory);
+                    }
+
                     $history = new AdherentEmailSubscriptionHistory($adherent, $subscription, $tag, new \DateTime(sprintf('-%s0 days', $key + 1)));
-                    if (in_array($adherent->getUuid(), [LoadAdherentData::ADHERENT_2_UUID, LoadAdherentData::ADHERENT_4_UUID])) {
+                    // Create a finished (inactive) subscription for an adherent
+                    if (in_array($adherent->getUuid(), [LoadAdherentData::ADHERENT_13_UUID])) {
                         $history->setUnsubscribedAt(new \DateTime(sprintf('-%s0 days', $key)));
                     }
 

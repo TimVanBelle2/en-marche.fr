@@ -72,4 +72,48 @@ class AdherentEmailSubscriptionHistoryRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
+
+    /**
+     * Count active adherents (not users) history for each specified subscription types in the referent managed area before the specified date.
+     *
+     * @param Adherent  $referent
+     * @param array     $subscriptionsTypes
+     * @param \DateTime $from
+     *
+     * @return array
+     */
+    public function countAllByTypeForReferentManagedArea(Adherent $referent, array $subscriptionsTypes, \DateTime $beforeDate, $cache = false): array
+    {
+        if (!$referent->isReferent()) {
+            throw new \InvalidArgumentException('Adherent must be a referent.');
+        }
+
+        $qb = $this->createQueryBuilder('h', 'h.subscribedEmailsType')
+            ->select('h.subscribedEmailsType, COUNT(h) AS count')
+            ->distinct('a.id')
+            ->innerJoin('h.adherent', 'a')
+            ->where('a.adherent = 1')
+            ->andWhere('a.status = :status')
+            ->andWhere('h.referentTag IN (:tags)')
+            ->andWhere('h.subscribedEmailsType IN (:subscriptions)')
+            ->andWhere('h.subscribedAt < :beforeDate')
+            ->andWhere('h.unsubscribedAt IS NULL OR h.unsubscribedAt >= :beforeDate')
+            ->setParameter('status', Adherent::ENABLED)
+            ->setParameter('tags', $referent->getManagedArea()->getTags())
+            ->setParameter('subscriptions', $subscriptionsTypes)
+            ->setParameter('beforeDate', $beforeDate)
+            ->groupBy('h.subscribedEmailsType')
+            ->getQuery()
+        ;
+
+        if ($cache) {
+            $qb
+                ->useQueryCache(true)
+                ->useResultCache(true)
+                ->setResultCacheLifetime(25920000) // 30 days
+            ;
+        }
+
+        return $qb->getArrayResult();
+    }
 }

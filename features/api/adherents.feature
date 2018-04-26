@@ -48,6 +48,14 @@ Feature:
     And the JSON should be equal to:
     """
     {
-      "female":1,"male":7,"total":8
+      "female":1,"male":7,"total":8,
+      "email_subscriptions": {
+          "2018-04": {"subscribed_emails_referents": 7, "subscribed_emails_local_host": 7},
+          "2018-03": {"subscribed_emails_referents": 7, "subscribed_emails_local_host": 7},
+          "2018-02": {"subscribed_emails_referents": 6, "subscribed_emails_local_host": 6},
+          "2018-01": {"subscribed_emails_referents": 3, "subscribed_emails_local_host": 3},
+          "2017-12": {"subscribed_emails_referents": 2, "subscribed_emails_local_host": 2},
+          "2017-11": {"subscribed_emails_referents": 2, "subscribed_emails_local_host": 2},
+      {
     }
     """
