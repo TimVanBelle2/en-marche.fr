@@ -13,13 +13,7 @@ class PayboxPaymentUnsubscriptionException extends BadRequestHttpException
     {
         $this->codeError = $codeError;
 
-        $errorMessage = 'Error unknown';
-
-        if (PayboxPaymentUnsubscriptionErrorEnum::isValidKey($key = "ERROR_$codeError")) {
-            $errorMessage = PayboxPaymentUnsubscriptionErrorEnum::$key();
-        }
-
-        parent::__construct(sprintf('%d: %s', $codeError, $errorMessage), $previous, $code);
+        parent::__construct(sprintf('%d: %s', $codeError, PayboxPaymentUnsubscriptionErrorEnum::getMessage($codeError)), $previous, $code);
     }
 
     public function getCodeError(): int
