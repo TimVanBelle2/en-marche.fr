@@ -7,7 +7,7 @@ use AppBundle\Entity\Donation;
 use AppBundle\Exception\PayboxPaymentUnsubscriptionException;
 use AppBundle\Mailer\MailerService;
 use AppBundle\Mailer\Message\PayboxPaymentUnsubscriptionConfirmationMessage;
-use Lexik\Bundle\PayboxBundle\Paybox\System\Cancellation\Request;
+use Lexik\Bundle\PayboxBundle\Paybox\System\Cancellation\Request as LexikRequest;
 
 class PayboxPaymentUnsubscription
 {
@@ -15,7 +15,7 @@ class PayboxPaymentUnsubscription
     private $donationRequestUtils;
     private $mailer;
 
-    public function __construct(MailerService $mailer, Request $request, DonationRequestUtils $donationRequestUtils)
+    public function __construct(MailerService $mailer, LexikRequest $request, DonationRequestUtils $donationRequestUtils)
     {
         $this->mailer = $mailer;
         $this->request = $request;

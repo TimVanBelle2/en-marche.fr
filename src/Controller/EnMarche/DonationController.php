@@ -170,7 +170,7 @@ class DonationController extends Controller
         if (!$donations) {
             $this->addFlash(
                 'danger',
-                'Auccun don mensuel n\'a été trouvé'
+                'Aucun don mensuel n\'a été trouvé'
             );
         }
 
