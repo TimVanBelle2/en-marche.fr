@@ -159,7 +159,7 @@ class DonationController extends Controller
                     'success',
                     'Votre don mensuel a bien été annulé. Vous recevrez bientôt un mail de confirmation.'
                 );
-            } catch (PayboxPaymentUnsubscriptionException $payboxPaymentUnsubscriptionException) {
+            } catch (PayboxPaymentUnsubscriptionException $e) {
                 $this->addFlash(
                     'danger',
                     'La requête n\'a pas abouti, veuillez réessayer s\'il vous plait. Si le problème persiste, merci de nous contacter en <a href="https://contact.en-marche.fr/" target="_blank">cliquant ici</a>'

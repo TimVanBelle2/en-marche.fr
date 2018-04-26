@@ -4,7 +4,6 @@ namespace AppBundle\Donation;
 
 use AppBundle\Entity\Donation;
 use Lexik\Bundle\PayboxBundle\Paybox\System\Base\Request as LexikRequestHandler;
-use Lexik\Bundle\PayboxBundle\Paybox\System\Base\Request;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -23,7 +22,7 @@ class PayboxFormFactory
         $this->donationRequestUtils = $donationRequestUtils;
     }
 
-    public function createPayboxFormForDonation(Donation $donation): Request
+    public function createPayboxFormForDonation(Donation $donation): LexikRequestHandler
     {
         $callbackParameters = $this->donationRequestUtils->buildCallbackParameters();
 
