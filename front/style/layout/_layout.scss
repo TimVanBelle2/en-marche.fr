@@ -447,7 +447,19 @@
 	flex-direction: column;
 }
 
+.flex--center--mobile {
+	@media (max-width: $mobile) {
+		display: flex;
+		justify-content: center;
+		flex-direction: column;
+	}
+}
+
 .flex--left {
 	display: flex;
 	justify-content: flex-start;
+}
+
+.block {
+	display: block !important;
 }
