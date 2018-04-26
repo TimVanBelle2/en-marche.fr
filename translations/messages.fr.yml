@@ -12,6 +12,8 @@ pending: En attente
 approved: Approuvé
 group: un groupe
 person: un membre
+global.yes: Oui
+global.no: Non
 
 #
 # Adherent

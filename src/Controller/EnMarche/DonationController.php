@@ -9,13 +9,14 @@ use AppBundle\Donation\PayboxPaymentUnsubscription;
 use AppBundle\Entity\Donation;
 use AppBundle\Exception\PayboxPaymentUnsubscriptionException;
 use AppBundle\Form\DonationRequestType;
+use AppBundle\OAuth\Form\ConfirmActionType;
 use AppBundle\Repository\DonationRepository;
 use Ramsey\Uuid\Uuid;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @Route("/don")
@@ -141,39 +142,47 @@ class DonationController extends Controller
     /**
      * @Route(
      *     "/mensuel/annuler",
-     *     defaults={"_enable_campaign_silence"=true},
      *     name="donation_subscription_cancel"
      * )
-     * @Method("GET")
+     * @Method("GET|POST")
      */
-    public function cancelSubscriptionAction(DonationRepository $donationRepository, PayboxPaymentUnsubscription $payboxPaymentUnsubscription): RedirectResponse
+    public function cancelSubscriptionAction(Request $request, DonationRepository $donationRepository, PayboxPaymentUnsubscription $payboxPaymentUnsubscription): Response
     {
-        $donations = $donationRepository->findAllSubscribedDonationByEmail($this->getUser()->getEmailAddress());
 
-        foreach ($donations as $donation) {
-            try {
-                $payboxPaymentUnsubscription->unsubscribe($donation);
-                $this->getDoctrine()->getManager()->flush();
-                $payboxPaymentUnsubscription->sendConfirmationMessage($donation, $this->getUser());
-                $this->addFlash(
-                    'success',
-                    'Votre don mensuel a bien été annulé. Vous recevrez bientôt un mail de confirmation.'
-                );
-            } catch (PayboxPaymentUnsubscriptionException $e) {
-                $this->addFlash(
-                    'danger',
-                    'La requête n\'a pas abouti, veuillez réessayer s\'il vous plait. Si le problème persiste, merci de nous contacter en <a href="https://contact.en-marche.fr/" target="_blank">cliquant ici</a>'
-                );
-            }
-        }
+        $donations = $donationRepository->findAllSubscribedDonationByEmail($this->getUser()->getEmailAddress());
 
         if (!$donations) {
             $this->addFlash(
                 'danger',
                 'Aucun don mensuel n\'a été trouvé'
             );
+            return $this->redirect($this->generateUrl('app_user_profile_donation'));
         }
 
-        return $this->redirect($this->generateUrl('app_user_profile_donation'));
+
+        $form = $this->createForm(ConfirmActionType::class)->handleRequest($request);
+        if ($form->isSubmitted()) {
+            if ($form->get('allow')->isClicked()) {
+                foreach ($donations as $donation) {
+                    try {
+                        $payboxPaymentUnsubscription->unsubscribe($donation);
+                        $this->getDoctrine()->getManager()->flush();
+                        $payboxPaymentUnsubscription->sendConfirmationMessage($donation, $this->getUser());
+                        $this->addFlash(
+                            'success',
+                            'Votre don mensuel a bien été annulé. Vous recevrez bientôt un mail de confirmation.'
+                        );
+                    } catch (PayboxPaymentUnsubscriptionException $e) {
+                        $this->addFlash('danger', 'La requête n\'a pas abouti, veuillez réessayer s\'il vous plait. Si le problème persiste, merci de nous contacter en <a href="https://contact.en-marche.fr/" target="_blank">cliquant ici</a>');
+                    }
+                }
+            }
+
+            return $this->redirect($this->generateUrl('app_user_profile_donation'));
+        }
+
+        return $this->render('user/donation_subscription_cancel_confirmation.html.twig', [
+            'confirmation_form' => $form->createView(),
+        ]);
     }
 }

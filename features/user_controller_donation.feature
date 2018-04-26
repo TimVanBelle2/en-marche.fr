@@ -20,7 +20,20 @@ Feature: Test donation page
     And I should see "Arrêter mon don mensuel"
 
     When I follow "Arrêter mon don mensuel"
+    Then I should be on "/don/mensuel/annuler"
+    And I should see "Êtes vous sûr de vouloir arrêter votre don mensuel ?"
+
+    When I press "Non"
     Then I should be on "/parametres/mon-compte/mes-dons"
+    And I should not see "La requête n'a pas abouti, veuillez réessayer s'il vous plait."
+
+    When I follow "Arrêter mon don mensuel"
+    Then I should be on "/don/mensuel/annuler"
+    And I should see "Êtes vous sûr de vouloir arrêter votre don mensuel ?"
+
+    When I press "Oui"
+    Then I should be on "/parametres/mon-compte/mes-dons"
+    And I should see "La requête n'a pas abouti, veuillez réessayer s'il vous plait."
 
   Scenario: Be able to navigate in my donation page as an adherent without monthly donations
     Given I am logged as "michelle.dufour@example.ch"
