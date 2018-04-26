@@ -118,9 +118,12 @@ class DonationRequestUtils
 
     public function buildDonationReference(Donation $donation): string
     {
-        return $donation->getUuid()->toString()
-            .'_'.$this->slugify->slugify($donation->getFullName())
-            .PayboxPaymentSubscription::getCommandSuffix($donation->getAmount(), $donation->getDuration());
+        return sprintf(
+            '%s_%s%s',
+            $donation->getUuid()->toString(),
+            $this->slugify->slugify($donation->getFullName()),
+            PayboxPaymentSubscription::getCommandSuffix($donation->getAmount(), $donation->getDuration())
+        );
     }
 
     private function hydrateFromRetryPayload(DonationRequest $request, string $payload): DonationRequest
