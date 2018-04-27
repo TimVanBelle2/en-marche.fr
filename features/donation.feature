@@ -25,7 +25,7 @@ Feature: The goal is to donate one time or multiple time with a subscription
       | /articles     |
 
   @javascript
-  Scenario: An anonyme user can donate successfully
+  Scenario: An anonymous user can donate successfully
     Given I am on "/don"
     And I press "OK"
     And wait 1 second until I see "Continuer"

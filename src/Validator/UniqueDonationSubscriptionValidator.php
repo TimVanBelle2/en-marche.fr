@@ -35,6 +35,10 @@ class UniqueDonationSubscriptionValidator extends ConstraintValidator
             throw new UnexpectedTypeException($constraint, UniqueCommittee::class);
         }
 
+        if (null === $value) {
+            return;
+        }
+
         if (!$value instanceof DonationRequest) {
             throw new UnexpectedTypeException($value, DonationRequest::class);
         }

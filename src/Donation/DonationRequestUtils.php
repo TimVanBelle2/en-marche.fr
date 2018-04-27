@@ -45,12 +45,10 @@ class DonationRequestUtils
     private const SESSION_DONATION_REQUEST = 'donation_request';
 
     private $locator;
-    private $session;
 
-    public function __construct(ServiceLocator $locator, SessionInterface $session)
+    public function __construct(ServiceLocator $locator)
     {
         $this->locator = $locator;
-        $this->session = $session;
     }
 
     /**
@@ -58,7 +56,7 @@ class DonationRequestUtils
      */
     public function createFromRequest(Request $request, float $amount, int $duration, ?Adherent $currentUser): DonationRequest
     {
-        if ($donation = $this->session->get(static::SESSION_DONATION_REQUEST)) {
+        if ($donation = $this->getSession()->get(static::SESSION_DONATION_REQUEST)) {
             return $donation;
         }
 
@@ -79,12 +77,12 @@ class DonationRequestUtils
 
     public function startDonationRequest(DonationRequest $donationRequest): void
     {
-        $this->session->set(static::SESSION_DONATION_REQUEST, $donationRequest);
+        $this->getSession()->set(static::SESSION_DONATION_REQUEST, $donationRequest);
     }
 
     public function terminateDonationRequest(): void
     {
-        $this->session->remove(static::SESSION_DONATION_REQUEST);
+        $this->getSession()->remove(static::SESSION_DONATION_REQUEST);
     }
 
     public function buildCallbackParameters()
@@ -190,6 +188,11 @@ class DonationRequestUtils
     private function getValidator(): ValidatorInterface
     {
         return $this->locator->get('validator');
+    }
+
+    private function getSession(): SessionInterface
+    {
+        return $this->locator->get('session');
     }
 
     private function getTokenManager(): CsrfTokenManagerInterface
