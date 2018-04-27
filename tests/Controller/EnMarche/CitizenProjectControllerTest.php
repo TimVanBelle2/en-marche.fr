@@ -584,7 +584,7 @@ class CitizenProjectControllerTest extends MysqlWebTestCase
     {
         $crawler = $this->client->getCrawler();
         $this->assertContains($author, $crawler->filter('.citizen-project-comment')->eq($position)->text());
-        $this->assertContains($text, $crawler->filter('.citizen-project-comment p')->eq($position)->text());
+        $this->assertContains($text, $crawler->filter('.citizen-project-comment div:nth-child(2) p')->eq($position)->text());
     }
 
     private function seeCommentSection(): bool
