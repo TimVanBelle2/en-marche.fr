@@ -11,7 +11,7 @@
                 {{ form_start(form) }}
                     {{ form_errors(form.content) }}
                     {{ form_widget(form.content, { attr: { placeholder: "Ecrivez votre message ici (soyez courtois et respectueux)" } }) }}
-                    {{ form_row(form.sendMail)}}
+                    {{ form_rest(form) }}
                     <button class="newbtn--small btn--blue">Publier</button>
                 {{ form_end(form) }}
 
