@@ -619,7 +619,7 @@ class CitizenProjectControllerTest extends MysqlWebTestCase
     private function seeReportLink(): bool
     {
         try {
-            $this->client->getCrawler()->selectLink('Signaler ce projet')->link();
+            $this->client->getCrawler()->selectLink('Signaler un abus')->link();
         } catch (\InvalidArgumentException $e) {
             return false;
         }
