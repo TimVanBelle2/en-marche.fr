@@ -1,7 +1,7 @@
 #
 # CRUD
 #
-link_action_create: Nouveau
+link_list: Sélectionner dans la liste
 
 locale:
     fr: Français

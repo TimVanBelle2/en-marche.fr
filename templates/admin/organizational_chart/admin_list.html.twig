@@ -1,0 +1,20 @@
+{% extends '@SonataAdmin/CRUD/base_list.html.twig' %}
+
+{% import 'referent/organizational_chart_macros.html.twig' as oc %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/organizational_chart.css') }}">
+{% endblock %}
+
+{% block table_body %}
+    <tbody>
+        {% if not app.request.isXmlHttpRequest %}
+            <br>
+            <p class="text-center">Ajouter un individu permet de pouvoir entrer des informations relatives à celui-ci, ajouter un groupe permet de créer un texte statique purement informatif dont découleront les individus/groupes</p>
+            <hr>
+            {{ oc.orga_chart_row(admin.OCItems, null, true, admin) }}
+        {% endif %}
+        {% include get_admin_template('outer_list_rows_' ~ admin.getListMode(), admin.code) %}
+    </tbody>
+{% endblock %}

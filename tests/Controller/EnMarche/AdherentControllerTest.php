@@ -94,8 +94,11 @@ class AdherentControllerTest extends MysqlWebTestCase
     {
         yield 'Mon compte' => ['/parametres/mon-compte'];
         yield 'Mes informations personnelles' => ['/parametres/mon-compte/modifier'];
-        yield 'Mot de passe' => ['/parametres/mon-compte/changer-mot-de-passe'];
+        yield 'Mes dons' => ['/parametres/mon-compte/mes-dons'];
+        yield 'Mes centres d\'intérêt' => ['/espace-adherent/mon-compte/centres-d-interet'];
+        yield 'Modifier mon profil' => ['/espace-adherent/mon-profil'];
         yield 'Notifications' => ['/parametres/mon-compte/preferences-des-emails'];
+        yield 'Mot de passe' => ['/parametres/mon-compte/changer-mot-de-passe'];
     }
 
     public function testProfileActionIsAccessibleForAdherent(): void
@@ -168,6 +171,8 @@ class AdherentControllerTest extends MysqlWebTestCase
         $this->assertSame('7', $crawler->filter(sprintf($optionPattern, 'birthdate][month'))->attr('value'));
         $this->assertSame('1950', $crawler->filter(sprintf($optionPattern, 'birthdate][year'))->attr('value'));
         $this->assertSame('carl999@example.fr', $crawler->filter(sprintf($inputPattern, 'emailAddress'))->attr('value'));
+        self::assertCount(1, $adherent->getReferentTags());
+        self::assertAdherentHasReferentTag($adherent, '73');
 
         // Submit the profile form with invalid data
         $crawler = $this->client->submit($crawler->selectButton('adherent[submit]')->form([
@@ -286,6 +291,8 @@ class AdherentControllerTest extends MysqlWebTestCase
         $this->assertNotNull($newLongitude = $adherent->getLongitude());
         $this->assertNotSame($oldLatitude, $newLatitude);
         $this->assertNotSame($oldLongitude, $newLongitude);
+        self::assertCount(1, $adherent->getReferentTags());
+        self::assertAdherentHasReferentTag($adherent, '06');
     }
 
     public function testEditAdherentInterests(): void

@@ -91,11 +91,13 @@ class AdministratorAdmin extends AbstractAdmin
                     'ROLE_ADMIN_DONATIONS',
                     'ROLE_ADMIN_MAILER',
                     'ROLE_ADMIN_ADHERENT_TAGS',
+                    'ROLE_ADMIN_REFERENT_TAGS',
                     'ROLE_ADMIN_REFERENTS',
                     'ROLE_ADMIN_REFERENTS_AREAS',
                     'ROLE_ADMIN_BOARD_MEMBER_ROLES',
                     'ROLE_ADMIN_TIMELINE',
                     'ROLE_ADMIN_CLIENTS',
+                    'ROLE_ADMIN_ORGANIGRAMM',
                 ],
             ])
             ->add(

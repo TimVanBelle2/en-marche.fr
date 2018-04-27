@@ -207,9 +207,9 @@ class AdherentRepository extends EntityRepository implements UserLoaderInterface
     {
         return $this
             ->createQueryBuilder('a')
-            ->where('a.managedArea.codes IS NOT NULL')
-            ->andWhere('LENGTH(a.managedArea.codes) > 0')
-            ->orderBy('LOWER(a.managedArea.codes)', 'ASC')
+            ->innerJoin('a.managedArea', 'managed_area')
+            ->innerJoin('managed_area.tags', 'managed_area_tag')
+            ->orderBy('LOWER(managed_area_tag.name)', 'ASC')
         ;
     }
 
@@ -217,7 +217,7 @@ class AdherentRepository extends EntityRepository implements UserLoaderInterface
     {
         $qb = $this
             ->createReferentQueryBuilder()
-            ->andWhere('FIND_IN_SET(:code, a.managedArea.codes) > 0')
+            ->andWhere('managed_area_tag.code = :code')
             ->setParameter('code', ManagedAreaUtils::getCodeFromCommittee($committee))
         ;
 
@@ -255,41 +255,22 @@ class AdherentRepository extends EntityRepository implements UserLoaderInterface
      */
     public function findAllManagedBy(Adherent $referent): array
     {
-        if (!$referent->getManagedArea()) {
+        if (!$referent->isReferent()) {
             return [];
         }
 
-        $qb = $this->createQueryBuilder('a')
+        return $this->createQueryBuilder('a')
             ->select('a', 'm')
             ->leftJoin('a.memberships', 'm')
+            ->innerJoin('a.referentTags', 'tag')
+            ->andWhere('tag IN (:tags)')
+            ->setParameter('tags', $referent->getManagedArea()->getTags())
             ->orderBy('a.registeredAt', 'DESC')
             ->addOrderBy('a.firstName', 'ASC')
             ->addOrderBy('a.lastName', 'ASC')
+            ->getQuery()
+            ->getResult()
         ;
-
-        $codesFilter = $qb->expr()->orX();
-
-        foreach ($referent->getManagedArea()->getCodes() as $key => $code) {
-            if (is_numeric($code)) {
-                // Postal code prefix
-                $codesFilter->add(
-                    $qb->expr()->andX(
-                        'a.postAddress.country = \'FR\'',
-                        $qb->expr()->like('a.postAddress.postalCode', ':code'.$key)
-                    )
-                );
-
-                $qb->setParameter('code'.$key, $code.'%');
-            } else {
-                // Country
-                $codesFilter->add($qb->expr()->eq('a.postAddress.country', ':code'.$key));
-                $qb->setParameter('code'.$key, $code);
-            }
-        }
-
-        $qb->andWhere($codesFilter);
-
-        return $qb->getQuery()->getResult();
     }
 
     public function findByNearCitizenProjectOrAcceptAllNotification(CitizenProject $citizenProject, int $offset = 0, bool $excludeSupervisor = true, int $radius = CitizenProjectMessageNotifier::RADIUS_NOTIFICATION_NEAR_PROJECT_CITIZEN): Paginator
@@ -511,5 +492,38 @@ class AdherentRepository extends EntityRepository implements UserLoaderInterface
         return array_map(function (UuidInterface $uuid) {
             return $uuid->toString();
         }, array_column($query->getArrayResult(), 'uuid'));
+    }
+
+    public function countByGender(): array
+    {
+        return $this->createQueryBuilder('a', 'a.gender')
+            ->select('a.gender, COUNT(a) AS count')
+            ->where('a.adherent = 1')
+            ->andWhere('a.status = :status')
+            ->setParameter('status', Adherent::ENABLED)
+            ->groupBy('a.gender')
+            ->getQuery()
+            ->getArrayResult()
+        ;
+    }
+
+    public function countByGenderManagedBy(Adherent $referent): array
+    {
+        if (!$referent->isReferent()) {
+            throw new \InvalidArgumentException('Adherent must be a referent.');
+        }
+
+        return $this->createQueryBuilder('a', 'a.gender')
+            ->select('a.gender, COUNT(a) AS count')
+            ->innerJoin('a.referentTags', 'tag')
+            ->where('tag IN (:tags)')
+            ->andWhere('a.adherent = 1')
+            ->andWhere('a.status = :status')
+            ->setParameter('tags', $referent->getManagedArea()->getTags())
+            ->setParameter('status', Adherent::ENABLED)
+            ->groupBy('a.gender')
+            ->getQuery()
+            ->getArrayResult()
+        ;
     }
 }
