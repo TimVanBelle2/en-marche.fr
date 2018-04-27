@@ -3,8 +3,10 @@
 namespace AppBundle\Entity;
 
 use Algolia\AlgoliaSearchBundle\Mapping\Annotation as Algolia;
+use AppBundle\Donation\DonationStatusEnum;
 use AppBundle\Donation\PayboxPaymentSubscription;
 use AppBundle\Geocoder\GeoPointInterface;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use libphonenumber\PhoneNumber;
 use Ramsey\Uuid\UuidInterface;
@@ -48,26 +50,6 @@ class Donation implements GeoPointInterface
     private $phone;
 
     /**
-     * @ORM\Column(length=100, nullable=true)
-     */
-    private $payboxResultCode;
-
-    /**
-     * @ORM\Column(length=100, nullable=true)
-     */
-    private $payboxAuthorizationCode;
-
-    /**
-     * @ORM\Column(type="json_array", nullable=true)
-     */
-    private $payboxPayload;
-
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    private $finished = false;
-
-    /**
      * @ORM\Column(length=50, nullable=true)
      */
     private $clientIp;
@@ -81,6 +63,20 @@ class Donation implements GeoPointInterface
      * @ORM\Column(type="datetime")
      */
     private $createdAt;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(length=25)
+     */
+    private $status;
+
+    /**
+     * @var Collection|Transaction[]
+     *
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Transaction", mappedBy="donation")
+     */
+    private $transactions;
 
     public function __construct(
         UuidInterface $uuid,
@@ -105,6 +101,7 @@ class Donation implements GeoPointInterface
         $this->clientIp = $clientIp;
         $this->createdAt = new \DateTime();
         $this->duration = $duration;
+        $this->status = DonationStatusEnum::WAITING_CONFIRMATION;
     }
 
     public function __toString(): string
@@ -112,8 +109,9 @@ class Donation implements GeoPointInterface
         return $this->lastName.' '.$this->firstName.' ('.($this->amount / 100).' €)';
     }
 
-    public function finish(array $payboxPayload): void
+    public function processPayload(array $payboxPayload): void
     {
+
         $this->finished = true;
         $this->payboxPayload = $payboxPayload;
         $this->payboxResultCode = $payboxPayload['result'];
@@ -182,26 +180,6 @@ class Donation implements GeoPointInterface
         return $this->phone;
     }
 
-    public function getPayboxResultCode(): ?string
-    {
-        return $this->payboxResultCode;
-    }
-
-    public function getPayboxAuthorizationCode(): ?string
-    {
-        return $this->payboxAuthorizationCode;
-    }
-
-    public function getPayboxPayload(): ?array
-    {
-        return $this->payboxPayload;
-    }
-
-    public function getPayboxPayloadAsJson(): string
-    {
-        return json_encode($this->payboxPayload, JSON_PRETTY_PRINT);
-    }
-
     public function getFinished(): bool
     {
         return $this->finished;
@@ -241,5 +219,27 @@ class Donation implements GeoPointInterface
         }
 
         return $payload;
+    }
+
+    public function getTransactions(): Collection
+    {
+        return $this->transactions;
+    }
+
+    public function addTransaction(Transaction $transaction): void
+    {
+        $this->transactions[] = $transaction;
+
+        $transaction->setDonation($this);
+    }
+
+    public function getStatus(): string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(string $status): void
+    {
+        $this->status = $status;
     }
 }
