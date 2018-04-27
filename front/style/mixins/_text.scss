@@ -10,107 +10,130 @@ $text--size-extra-large: 48px;
 $text--size-extra-large--medium: 64px;
 $text--size-extra-large--large: 96px;
 $text--size-extra-large--big: 128px;
+
 @mixin text--bold {
     font-weight: 700;
 }
+
 @mixin breakword {
     overflow-wrap: break-word;
     word-wrap: break-word;
 }
+
 @mixin text--smallest {
     font-size: $text--size-smallest;
     line-height: 18px;
 }
+
 @mixin text--small {
     font-size: $text--size-small;
     line-height: 20px;
 }
+
 @mixin text--default {
     font-size: $text--size-default;
     line-height: 24px;
 }
+
 @mixin text--medium-small {
     font-size: $text--size-medium--small;
     line-height: 27px;
 }
+
 @mixin text--medium-small--bold {
     font-size: $text--size-medium--small;
     font-weight: 700;
     line-height: 1.4em;
 }
+
 @mixin text--medium {
     font-size: $text--size-medium;
     line-height: 1.2em;
+
     @media (max-width: $mobile) {
         @include text--medium-small;
     }
 }
+
 @mixin text--medium-large {
     font-size: $text--size-medium--large;
     letter-spacing: -0.6px;
     line-height: 32px;
 }
+
 @mixin text--large {
     font-size: $text--size-large;
     letter-spacing: -0.5px;
     line-height: 38px;
+
     @media (max-width: $mobile) {
         font-size: $text--size-medium--large;
         line-height: 1.2em;
     }
 }
+
 @mixin text--larger {
     font-size: $text--size-larger;
     line-height: 0.93;
     letter-spacing: -1.2px;
+
     @media (max-width: $mobile) {
         font-size: $text--size-medium--large;
         letter-spacing: -0.6px;
         line-height: 32px;
     }
 }
+
 @mixin text--extra-large {
     font-size: $text--size-extra-large;
     letter-spacing: -1.5px;
     line-height: 52px;
+
     @media (max-width: $tablet) {
         font-size: $text--size-larger;
         line-height: 0.93;
         letter-spacing: -1.2px;
     }
+
     @media (max-width: $mobile) {
         font-size: $text--size-large;
         letter-spacing: -0.5px;
         line-height: 38px;
     }
 }
+
 @mixin text--extra-large--medium {
     font-size: $text--size-extra-large--medium;
     letter-spacing: -1.5px;
     line-height: 52px;
 }
+
 @mixin text--extra-large--large {
     font-size: $text--size-extra-large--large;
     letter-spacing: -1.5px;
     line-height: 52px;
 }
+
 @mixin text--extra-large--big {
     font-size: $text--size-extra-large--big;
     letter-spacing: -1.5px;
     line-height: 52px;
 }
+
 @mixin text--body {
     font-family: $font-roboto;
     line-height: 1.5;
     font-size: $text--size-default;
     @include breakword;
 }
+
 @mixin text--summary {
     font-family: $font-roboto;
     line-height: 1.4;
     font-size: $text--size-small;
     font-weight: 400;
 }
+
 @mixin text--logo {
     @include text--bold;
     font-family: $font-gillsans;
@@ -119,9 +142,11 @@ $text--size-extra-large--big: 128px;
     line-height: 0.9em;
     margin-right: 10px;
     letter-spacing: -0.7px;
+
     @media (max-width: $tablet) {
         font-size: $text--size-medium;
     }
+
     @media (max-width: $mobile) {
         font-size: 22px;
     }
@@ -130,9 +155,11 @@ $text--size-extra-large--big: 128px;
         border: 0;
     }
 }
+
 @mixin text--blue {
     color: $blue;
 }
+
 @mixin text--uppercase {
     text-transform: uppercase;
     letter-spacing: 1.5px;
@@ -173,6 +200,7 @@ $text--size-extra-large--big: 128px;
 
     &--large {
         @include text--large;
+
         @media (max-width: $mobile) {
             font-size: $text--size-medium;
             line-height: 1.2em;
@@ -181,6 +209,7 @@ $text--size-extra-large--big: 128px;
 
     &--larger {
         @include text--larger;
+
         @media (max-width: $mobile) {
             font-size: $text--size-large;
             letter-spacing: -0.5px;
@@ -191,6 +220,7 @@ $text--size-extra-large--big: 128px;
     &--extra-large {
         font-size: $text--size-extra-large;
         line-height: 1em;
+
         @media (max-width: $mobile) {
             @include text--larger;
         }
@@ -253,6 +283,7 @@ $text--size-extra-large--big: 128px;
         &-extra {
             max-width: 400px;
         }
+
         @media (max-width: $mobile) {
             width: 100%;
         }
@@ -349,7 +380,6 @@ $text--size-extra-large--big: 128px;
         color: white;
         border-color: white;
     }
-
     &--blue--dark {
         color: $blue--dark;
     }
@@ -444,7 +474,7 @@ $text--size-extra-large--big: 128px;
             margin-bottom: 15px;
 
             li {
-                padding: 0 0 4px;
+                padding: 0 0 4px 0;
 
                 .btn {
                     margin-bottom: 6px;
@@ -481,6 +511,7 @@ $text--size-extra-large--big: 128px;
                 }
             }
         }
+
         @media (max-width: $mobile) {
             li,
             li:last-child {
@@ -510,6 +541,7 @@ $text--size-extra-large--big: 128px;
             .icon-search {
                 position: relative;
                 top: 4px;
+
                 @media (max-width: $mobile) {
                     top: 1px;
                     width: 20px;
@@ -537,8 +569,8 @@ $text--size-extra-large--big: 128px;
         align-items: center;
         border: none;
 
-        i,
-        svg {
+        svg,
+        i {
             margin-right: 7px;
 
             &.fa {
@@ -552,8 +584,8 @@ $text--size-extra-large--big: 128px;
         }
 
         &--reversed {
-            i,
-            svg {
+            svg,
+            i {
                 margin-left: 7px;
             }
         }
