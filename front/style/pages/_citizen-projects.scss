@@ -152,7 +152,7 @@
 		}
 
 		form {
-			background-color: rgba(250, 250, 250, 0.55);
+			background-color: $gray--lighter;
 			padding: 20px;
 		}
 
@@ -264,7 +264,7 @@
 	display: inline;
 	padding: 5px 10px;
 	border-radius: 50px;
-	font-size: 13px;
+	font-size: $text--size-smallest;
 	margin-right: 10px;
 	cursor: pointer;
 	transition: all 0.5s;
