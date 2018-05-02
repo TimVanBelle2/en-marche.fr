@@ -21,12 +21,11 @@
                 <div class="citizen-project-comment">
                     <div class="header">
                         <p>{{ comment.authorFullName }} </p>
-                    <small> {{ comment.createdAt|ago|capitalize }}</small>
+                        <small> {{ comment.createdAt|ago|capitalize }}</small>
                     </div>
                     <div>
                         <p>{{ comment.content }}</p>
                     </div>
-
                 </div>
             {% endfor %}
         </div>

@@ -434,23 +434,20 @@
     padding: 0 25px;
 }
 
-.flex--center {
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-}
+.flex {
+    &--center {
+        @include flex(center);
 
-.flex--center--mobile {
-    @media (max-width: $mobile) {
-        display: flex;
-        justify-content: center;
-        flex-direction: column;
+        &--mobile {
+            @media (max-width: $mobile) {
+                @include flex(center);
+            }
+        }
     }
-}
 
-.flex--left {
-    display: flex;
-    justify-content: flex-start;
+    &--left {
+        @include flex(flex-start);
+    }
 }
 
 .block {
